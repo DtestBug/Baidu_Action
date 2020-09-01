@@ -1,5 +1,5 @@
 from openpyxl import load_workbook
-from openpyxl.styles import PatternFill # 导入填充模块
+from openpyxl.styles import PatternFill  # 导入填充模块
 from openpyxl import Workbook
 import datetime
 import time
@@ -22,36 +22,45 @@ Time1 = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
 
 Ym_api = 'https://cloud.baidu.com/api/yunying/discount/login/info/order'
 Page_Path = 'https://cloud.baidu.com/campaign/PromotionWebsite/index.html'
-headers = {
-    'cookie':'AGL_USER_ID=5ed63b12-4440-4d47-b881-0f098f90410e; BIDUPSID=A9069B1FBC1A91044A9BEFCC8CFF8FE1; PSTM=1595216240; BAIDUID=965EAC8334F751D924041185AA64323A:FG=1; MCITY=-%3A; UUAP_P_TOKEN=PT-495895013850165249-f58Ox5WOwu-uuap; SECURE_UUAP_P_TOKEN=PT-495895013850165249-f58Ox5WOwu-uuap; BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzmUB+1+DiLXhE95JL2jUeE+iRA635wdDcUwbcGTaNk1iJVtDjbcbA+yKuahFQG0gDCoYqh5kfz0M8EvmB3iuJPU=; SECURE_BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzmUB+1+DiLXhE95JL2jUeE+iRA635wdDcUwbcGTaNk1iJVtDjbcbA+yKuahFQG0gDCoYqh5kfz0M8EvmB3iuJPU=; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; bce-userbind-source=PASSPORT; __cas__rn__=0; bce-ctl-sessionmfa-cookie=bce-session; bce-device-token=null; __cas__id__285=30736364; __cas__st__285=c838a4d3c17e3d4bc1025c773fb8cdf4485009ba450fe14bfc611a24070ee7a9750ead6fcc2ecfdb9a07dd65; BDRCVFR[feWj1Vr5u3D]=I67x6TjHwwYf0; delPer=0; BIDUPSID_BFESS=A9069B1FBC1A91044A9BEFCC8CFF8FE1; _ga=GA1.2.1025800176.1596788307; _gid=GA1.2.1962807195.1596788307; jsdk-user=v_dingguoqiang; ZD_ENTRY=baidu; RT="z=1&dm=baidu.com&si=hfjulcym5t&ss=kdjyrdfw&sl=f&tt=fj7&bcn=https%3A%2F%2Ffclog.baidu.com%2Flog%2Fweirwood%3Ftype%3Dperf&ld=g950"; __yjsv5_shitong=1.0_7_f9d6720c0f3610ff1c28d0283738b0248c13_300_1596791194700_61.135.169.81_791e3c8f; yjs_js_security_passport=77c7fe7957d15ec51d3c12405da33cfc38480c38_1596791195_js; PSINO=1; H_PS_PSSID=32288_1446_32300_32355_32327_31660_32350_32045_32398_32116_26350_32505_32481_22157; __xsptplusUT_861=1; BDUSS=zV-TU5Maldwc0Q3VURkbk03S2Q5ZmpiaDZuOGV0WXEydmt5WEFTS29JaUx1VlJmRUFBQUFBJCQAAAAABwAAAAEAAACgxzCRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIssLV-LLC1fZ; BDUSS_BFESS=zV-TU5Maldwc0Q3VURkbk03S2Q5ZmpiaDZuOGV0WXEydmt5WEFTS29JaUx1VlJmRUFBQUFBJCQAAAAABwAAAAEAAACgxzCRAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIssLV-LLC1fZ; Hm_lvt_28a17f66627d87f1d046eae152a1c93d=1596598228,1596678950,1596765012,1596796047; _gat_gtag_UA_138572523_1=1; bce-ctl-client-cookies="BDUSS,bce-passport-stoken,bce-device-cuid,bce-device-token,BAIDUID"; bce-auth-type=PASSPORT; bce-passport-stoken=a691611413f9b48a0f21e4b141a180edba5d0641f0fd4c3f5f3a83a72fdaa49a; bce-sessionid=0017ff22b8f8c34476db35c86cbed548a55; bce-user-info=2020-08-07T18:27:26Z|bdc20000b3bc93b10345e4d55a9398fd; bce-session=fffc58b7eabd4daa8937269dc27f62bfb6564898d0cb4f13b9cb25a95a9a9780|1e4d6a28b2d4fc9bec499ef80cd000e0; bce-login-type=PASSPORT; bce-login-expire-time="2020-08-07T10:57:26Z|2e1d3e4cea392000c3d427039b989fe5"; bce-login-display-name=*******5733; __xsptplus861=861.2.1596793890.1596796060.11%234%7C%7C%7C%7C%7C%23%23zAA3_px42jiAiMbXdscw1tJyLY64cXNk%23; Hm_lpvt_28a17f66627d87f1d046eae152a1c93d=1596796060; BAIDU_CLOUD_TRACK_PATH=https%3A%2F%2Fcloudtest.baidu.com%2Fcampaign%2Forder.html%3F_%3D1596796045830%26ed%26no_xss%23%2Faipage%2FproductActivity~product%3Daipage20200607%26config%3Dkill_aipage_site_miniprogram_1_12m',
-    'Content-Type': 'application/json',  # 不加报500
+page_headers = {
+    'Cookie': 'AGL_USER_ID=5ed63b12-4440-4d47-b881-0f098f90410e; BIDUPSID=A9069B1FBC1A91044A9BEFCC8CFF8FE1; PSTM=1595216240; BAIDUID=965EAC8334F751D924041185AA64323A:FG=1; MCITY=-%3A; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; yjs_js_security_passport=e700866e4721bb2b3ec1695c399adf5930be8bcd_1597302603_js; BIDUPSID_BFESS=A9069B1FBC1A91044A9BEFCC8CFF8FE1; _ga=GA1.2.1775422955.1597372647; _gid=GA1.2.842133575.1597372647; BDUSS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; BDUSS_BFESS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; Hm_lvt_28a17f66627d87f1d046eae152a1c93d=1597198709,1597283859,1597372642,1597372691; UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; SECURE_UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; jsdk-user=v_dingguoqiang; BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; SECURE_BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; RT="z=1&dm=baidu.com&si=hkiudauq1p&ss=kdtnx7sd&sl=9&tt=axb&bcn=https%3A%2F%2Ffclog.baidu.com%2Flog%2Fweirwood%3Ftype%3Dperf&ld=do9a&cl=2ru5"; bce-userbind-source=PASSPORT%3BUUAP; bce-ctl-client-cookies="__cas__st__285,__cas__id__285,__cas__rn__,SIGNIN_UC,bce-device-cuid,bce-device-token,BAIDUID,ucbearer-clientid,ucbearer-devicecode,ucbearer-token,ucbearer-ucid"; bce-auth-type=UC; __cas__id__285=30736364; __cas__rn__=0; bce-sessionid=0028e62007484fe43f5a6b447d1c4ef7703; bce-user-info=2020-08-14T11:33:31Z|16f0e314d576f2a8e4bf4291adda89a4; bce-ctl-sessionmfa-cookie=bce-session; bce-session=db5adbbd3653492689b2bad486e13550743e6344eb9f40998fd9e19e26d35b04|0495112c3c478c5f86c9da6d4dd3c130; bce-login-type=UC; __cas__st__285=c838a4d3c17e3d4bc1025c773fb8cdf4485009ba450fe14bfc611a24070ee7a9750ead6fcc2ecfdb9a07dd65; bce-login-display-name=15011112222; _gat_gtag_UA_138572523_1=1; Hm_lpvt_28a17f66627d87f1d046eae152a1c93d=1597376027; BAIDU_CLOUD_TRACK_PATH=https%3A%2F%2Fcloudtest.baidu.com%2Fcampaign%2Forder.html%3F_%3D1597376011466%26unifrom%3Deventpage%23%2FaiDay%2FactivityPromotion~product%3Dnlp20200715%26config%3Dkill_nlp_540_10w_12%26qps%3D1'    # 'csrftoken': '2020-08-13T18:37:18Z|4ed1e831797bd2b9df7e60135c888f5e',
+    # 'Content-Type': 'application/json'
+}
+api_headers = {
+    'Cookie': 'AGL_USER_ID=5ed63b12-4440-4d47-b881-0f098f90410e; BIDUPSID=A9069B1FBC1A91044A9BEFCC8CFF8FE1; PSTM=1595216240; BAIDUID=965EAC8334F751D924041185AA64323A:FG=1; MCITY=-%3A; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; yjs_js_security_passport=e700866e4721bb2b3ec1695c399adf5930be8bcd_1597302603_js; BIDUPSID_BFESS=A9069B1FBC1A91044A9BEFCC8CFF8FE1; _ga=GA1.2.1775422955.1597372647; _gid=GA1.2.842133575.1597372647; BDUSS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; BDUSS_BFESS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; Hm_lvt_28a17f66627d87f1d046eae152a1c93d=1597198709,1597283859,1597372642,1597372691; UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; SECURE_UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; jsdk-user=v_dingguoqiang; BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; SECURE_BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; RT="z=1&dm=baidu.com&si=hkiudauq1p&ss=kdtnx7sd&sl=9&tt=axb&bcn=https%3A%2F%2Ffclog.baidu.com%2Flog%2Fweirwood%3Ftype%3Dperf&ld=do9a&cl=2ru5"; bce-userbind-source=PASSPORT%3BUUAP; bce-ctl-client-cookies="__cas__st__285,__cas__id__285,__cas__rn__,SIGNIN_UC,bce-device-cuid,bce-device-token,BAIDUID,ucbearer-clientid,ucbearer-devicecode,ucbearer-token,ucbearer-ucid"; bce-auth-type=UC; __cas__id__285=30736364; __cas__rn__=0; bce-sessionid=0028e62007484fe43f5a6b447d1c4ef7703; bce-user-info=2020-08-14T11:33:31Z|16f0e314d576f2a8e4bf4291adda89a4; bce-ctl-sessionmfa-cookie=bce-session; bce-session=db5adbbd3653492689b2bad486e13550743e6344eb9f40998fd9e19e26d35b04|0495112c3c478c5f86c9da6d4dd3c130; bce-login-type=UC; __cas__st__285=c838a4d3c17e3d4bc1025c773fb8cdf4485009ba450fe14bfc611a24070ee7a9750ead6fcc2ecfdb9a07dd65; bce-login-display-name=15011112222; _gat_gtag_UA_138572523_1=1; Hm_lpvt_28a17f66627d87f1d046eae152a1c93d=1597376027; BAIDU_CLOUD_TRACK_PATH=https%3A%2F%2Fcloudtest.baidu.com%2Fcampaign%2Forder.html%3F_%3D1597376011466%26unifrom%3Deventpage%23%2FaiDay%2FactivityPromotion~product%3Dnlp20200715%26config%3Dkill_nlp_540_10w_12%26qps%3D1',
+    # 'csrftoken': '2020-08-13T18:37:18Z|4ed1e831797bd2b9df7e60135c888f5e',
+    'Content-Type': 'application/json'
 }
 
-file_name = r'E:\BD_A\%s价格核对%s.xlsx'% (Project_name,Time1)
-
+file_name = r'E:\BD_A\%s价格核对%s.xlsx' % (Project_name, Time1)
 wb = Workbook()  # 实例对象需要wb.save(r'E:\BD_A\域名价格核对%s.xlsx'% Time1)来创建文件保存数据
 
 # sheet重命名
 sheet = wb['Sheet']
 sheet.title = f'{Project_name}前后端价格对比'
-Fille = PatternFill('solid', fgColor='FFBB02') #solid 是填充实色的意思？
-''''''
+Fille = PatternFill('solid', fgColor='FFBB02')  # solid 是填充实色的意思？
+error_Fille = PatternFill('solid', fgColor='FF0000')  # darkVertical 是填充竖线  FF0000是红色
+header_Fille = PatternFill('solid', fgColor='99FF00')  # darkVertical 是填充竖线  99FF00是黄色
+
 # 先写头部
-header = ['id', '前端campaignId', '前端价格', '后端价格', '前端原价', '后端原价', '后端campaignId', '对比结果']  # 首行头部信息作为变量可更改
-for i in range(len(header)):
-    sheet.cell(row=1,column=i+1).value = header[i]
+excel_header = ['id', '前端campaignId', '前端价格', '后端价格', '对比结果', '前端原价', '后端原价', '后端campaignId']  # 首行头部信息作为变量可更改
+for i in range(len(excel_header)):
+    sheet.cell(row=1, column=i+1).value = excel_header[i]
+    sheet.cell(row=1, column=i+1).fill = header_Fille  # 首行颜色
+    sheet.freeze_panes = wb.active.cell(row=2, column=1)  # 首行冻结
 
     # 单元格宽度设置
     sheet.column_dimensions['A'].width = 5
-    sheet.column_dimensions['B'].width = 55
-    sheet.column_dimensions['C'].width = 20
-    sheet.column_dimensions['D'].width = 20
-    sheet.column_dimensions['E'].width = 20
-    sheet.column_dimensions['F'].width = 20
-    sheet.column_dimensions['G'].width = 55
-    sheet.column_dimensions['H'].width = 20
+    sheet.column_dimensions['B'].width = 45
+    sheet.column_dimensions['C'].width = 10
+    sheet.column_dimensions['D'].width = 10
+    sheet.column_dimensions['E'].width = 20  # 对比结果
+    sheet.column_dimensions['F'].width = 10
+    sheet.column_dimensions['G'].width = 10
+    sheet.column_dimensions['H'].width = 45
 
-Page_M = requests.get(Page_Path)
+data = {}
+Page_M = requests.request("get", url=Page_Path, data=data, headers=page_headers)
 Page_M.encoding = 'UTF-8'
 PQ_Page = pq(Page_M.text)
 
@@ -163,115 +172,134 @@ for i in PQ_Page('#market-module .product.mail-product .product-body'):
     price_lists.append(Email_price)
     old_lists.append(Email_sheng)
 
-# print(campaignId_lists)
 x = 0
-
 for i in range(len(campaignId_lists)):
     x += 1
     sheet.cell(row=i + 2, column=1).value = x
     sheet.cell(row=i + 2, column=2).value = campaignId_lists[i]
 
 for i in range(len(price_lists)):
-    sheet.cell(row=i + 2, column=3).value = "'"+str(price_lists[i])
+    sheet.cell(row=i + 2, column=3).value = str(price_lists[i])
     sheet.cell(row=i + 2, column=3).fill = Fille  # 将当前行的每一个表格填充颜色
 
 for i in range(len(old_lists)):
-    sheet.cell(row=i + 2, column=5).value = "'"+str(old_lists[i])
+    sheet.cell(row=i + 2, column=6).value = str(old_lists[i])
+    sheet.cell(row=i + 2, column=6).fill = Fille  # 将当前行的每一个表格填充颜色
+
 print('前端信息导入完毕！')
 print('=' * 100)
 
 
-
+data_count = 0
 for i in campaignId_lists:
-    data = "{\"campaignId\":\"%s\"}"% i  # 阔以请求到数据
+    data_count += 1
+    data = "{\"campaignId\":\"%s\"}" % i  # 阔以请求到数据
+    print(data_count,data)
+
     # data = {"campaignId":"20200607_discount_kill_aipage_site_miniprogram_1_12m"}  # 报500错误
     count = 0
+
     while True:
         try:
             # 请求的时候参数必须为url,data,headers。如果headers内需要其他参数的话，必须要用headers=headers，直接写cookies=XX会报错
-            result = requests.post(url=Ym_api, data=data, headers=headers).json()  # verify=False
+            result = requests.post(url=Ym_api, data=data, headers=api_headers).json()  # verify=False
+
         except requests.exceptions.ProxyError as e:
             print(e)
             print('远程访问被拒绝，正在重连...')
         except requests.exceptions.ConnectionError as r:
             print(r, f'\n已经{count}分钟')
             time.sleep(60)
-            print('500')
             count += 1
         else:
             count += 1
             try :
                 if result['result']['price']:
-                    # print(result['result']['price'], result['result']['privilegeId'])
-                    Price_new.append(result['result']['price']['campaignPrice'])
-                    Price_old.append(result['result']['price']['originalPrice'])
+                    Price_new.append(str(result['result']['price']['campaignPrice']).split('.')[0])
+                    Price_old.append(str(result['result']['price']['originalPrice']).split('.')[0])
                     Price_campaignId.append(result['result']['privilegeId'])
             except KeyError as e:
-                Price_new.append('email产品只需要跳转正常即可')
-                Price_old.append('email产品只需要跳转正常即可')
+                Price_new.append('本产品查询报500')
+                if result['error']:
+                    Price_old.append(result['error'])
+                else:
+                    Price_old.append('缺少报错信息')
                 Price_campaignId.append(data)
                 print(result,'价格没有查出来！', data)
                 pass
             break
+
+    # 调试第二条数据跳出
+    # if data_count == 2:
+    #     break
 for i in range(len(Price_new)):
-    sheet.cell(row=i + 2, column=4).value = "'"+str(Price_new[i])
+    sheet.cell(row=i + 2, column=4).value = str(Price_new[i])
     sheet.cell(row=i + 2, column=4).fill = Fille  # 将当前行的每一个表格填充颜色
 
 for i in range(len(Price_old)):
-    sheet.cell(row=i + 2, column=6).value = "'"+str(Price_old[i])
+    sheet.cell(row=i + 2, column=7).value = str(Price_old[i])
+    sheet.cell(row=i + 2, column=7).fill = Fille  # 将当前行的每一个表格填充颜色
 
 for i in range(len(Price_campaignId)):
-    sheet.cell(row=i + 2, column=7).value = Price_campaignId[i]
+    sheet.cell(row=i + 2, column=8).value = Price_campaignId[i]
 print('后端信息导入完毕')
-
 wb.save(file_name)
 
-# 写数据
-# for i in range(len(result)):
-#     for j in range(len(result[i])):
-#         sheet.cell(row=i+2,column=j+1).value=result[i][j]
-
+# =========读取数据=========
 print('开始对比前后端数据...')
-def read_excel(file,sheet):
 
+
+def read_excel(file_path, sheet_name):
     # 读取Excel表格表面数据，不读取公式，如需获取表格内公式，将data_only改为false(本代码不推荐，因为改了之后不会显示Excel数据)
-    sheet = load_workbook(file,data_only=True,)[sheet]
+    file_sheet = load_workbook(file_path, data_only=True,)[sheet_name]
 
-    #获取头部
-    header = []
-    for i in range(sheet.max_column):
-        header.append(sheet.cell(row=1,column=i+1).value)
+    # 获取头部
+    sheet_header = []
+    for Header_data in range(file_sheet.max_column):
+        sheet_header.append(file_sheet.cell(row=1, column=Header_data+1).value)
 
+    # 获取数据
     data_list = []
-    #获取数据并且返回数据
-    for i in range(sheet.max_row-1):
-        dict = {}
-        for j in range(len(header)):
-            dict[header[j]]=sheet.cell(row=i+2,column=j+1).value
-        data_list.append(dict)
-    return data_list
+    for data_data1 in range(file_sheet.max_row-1):
+        data_dict = {}
+        for data_data2 in range(len(sheet_header)):
+            data_dict[sheet_header[data_data2]] = file_sheet.cell(row=data_data1+2, column=data_data2+1).value
+        data_list.append(data_dict)
+    return data_list  # 返回数据
 
-x = read_excel(file_name, sheet.title)
-
-# 读取数据并且在指定列追加数据
+# =======读取数据并且在指定列追加数据=======
+file_Data = read_excel(file_name, sheet.title)
 wb1 = load_workbook(file_name)
 ws1 = wb1[sheet.title]
 
+# =========数据对比=========
 m = 0
-for i in x:
-    if (i['前端价格'] in i['后端价格']) and i['前端原价'] in i['后端原价']:
-        m+=1
-        ws1.cell(row=m + 1, column=8).value = "前后端价格一致"  # excel追加数据
-        ws1.cell(row=m + 1, column=8).fill = Fille  # 将当前行的每一个表格填充颜色
-
-        print('\033[2;33;34m===== 前端价格与后端价格一致 =====\033[0m ')
-        print('前端:', '价格:', i['前端价格'], i['前端campaignId'])
-        print('后端:', '价格:', i['后端价格'], i['后端campaignId'])
-        print('='*50, '\n')
-    else:  # 不一致的数据
+for i in file_Data:
+    if (i['前端价格'] == i['后端价格']) and i['前端原价'] == i['后端原价']:
         m += 1
-        ws1.cell(row=m + 1, column=8).value = "无后端数据"
-        ws1.cell(row=m + 1, column=8).fill = Fille  # 将当前行的每一个表格填充颜色
+        ws1.cell(row=m + 1, column=5).value = "前后端价格一致"  # excel追加数据
+
+    elif (i['前端价格'] is None) or (i['前端原价'] is None):
         print(i)
+        m += 1
+        ws1.cell(row=m + 1, column=5).value = "没有查询到前端数据"  # excel追加数据
+        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
+    elif (i['后端价格'] is None) or (i['后端原价'] is None):
+        print(i)
+        m += 1
+        ws1.cell(row=m + 1, column=5).value = "没有查询到后端数据"  # excel追加数据
+        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+    elif i['前端价格'] != i['后端价格']:
+        print(i)
+        m += 1
+        ws1.cell(row=m + 1, column=5).value = "售卖价格不一致"  # excel追加数据
+        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+    elif i['前端原价'] != i['后端原价']:
+        print(i)
+        m += 1
+        ws1.cell(row=m + 1, column=5).value = "原价不一致"  # excel追加数据
+        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
 
 wb1.save(file_name)
