@@ -164,8 +164,8 @@ for i in campaignId_lists:
             break
 
     # 调试第二条数据跳出
-    # if data_count == 2:
-    #     break
+    if data_count == 2:
+        break
 for i in range(len(Price_new)):
     sheet.cell(row=i + 2, column=4).value = str(Price_new[i])
     sheet.cell(row=i + 2, column=4).fill = Fille  # 将当前行的每一个表格填充颜色
@@ -200,108 +200,6 @@ def read_excel(file_path, sheet_name):
             data_dict[sheet_header[data_data2]] = file_sheet.cell(row=data_data1+2, column=data_data2+1).value
         data_list.append(data_dict)
     return data_list  # 返回数据
-
-
-# =======读取数据并且在指定列追加数据=======
-file_Data = read_excel(file_name, sheet.title)
-wb1 = load_workbook(file_name)
-ws1 = wb1[sheet.title]
-
-# =========数据对比=========
-m = 0
-for i in file_Data:
-    if (i['前端价格'] == i['后端价格']) and i['前端原价'] == i['后端原价']:
-        m += 1
-        ws1.cell(row=m + 1, column=5).value = "前后端价格一致"  # excel追加数据
-
-    elif (i['前端价格'] is None) or (i['前端原价'] is None):
-        print(i)
-        m += 1
-        ws1.cell(row=m + 1, column=5).value = "没有查询到前端数据"  # excel追加数据
-        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
-    elif (i['后端价格'] is None) or (i['后端原价'] is None):
-        print(i)
-        m += 1
-        ws1.cell(row=m + 1, column=5).value = "没有查询到后端数据"  # excel追加数据
-        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
-
-    elif i['前端价格'] != i['后端价格']:
-        print(i)
-        m += 1
-        ws1.cell(row=m + 1, column=5).value = "售卖价格不一致"  # excel追加数据
-        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
-
-    elif i['前端原价'] != i['后端原价']:
-        print(i)
-        m += 1
-        ws1.cell(row=m + 1, column=5).value = "原价不一致"  # excel追加数据
-        ws1.cell(row=m + 1, column=5).fill = error_Fille  # 将当前行的每一个表格填充颜色
-
-wb1.save(file_name)
-
-        except requests.exceptions.ProxyError as e:
-            print(e)
-            print('远程访问被拒绝，正在重连...')
-        except requests.exceptions.ConnectionError as r:
-            print(r, f'\n已经{count}分钟')
-            time.sleep(60)
-            count += 1
-        else:
-            count += 1
-            try :
-                if result['result']['price']:
-                    Price_new.append(str(result['result']['price']['campaignPrice']).split('.')[0])
-                    Price_old.append(str(result['result']['price']['originalPrice']).split('.')[0])
-                    Price_campaignId.append(result['result']['privilegeId'])
-            except KeyError as e:
-                Price_new.append('本产品查询报500')
-                if result['error']:
-                    Price_old.append(result['error'])
-                else:
-                    Price_old.append('缺少报错信息')
-                Price_campaignId.append(data)
-                print(result,'价格没有查出来！', data)
-                pass
-            break
-
-    # 调试第二条数据跳出
-    # if data_count == 2:
-    #     break
-for i in range(len(Price_new)):
-    sheet.cell(row=i + 2, column=4).value = str(Price_new[i])
-    sheet.cell(row=i + 2, column=4).fill = Fille  # 将当前行的每一个表格填充颜色
-
-for i in range(len(Price_old)):
-    sheet.cell(row=i + 2, column=7).value = str(Price_old[i])
-    sheet.cell(row=i + 2, column=7).fill = Fille  # 将当前行的每一个表格填充颜色
-
-for i in range(len(Price_campaignId)):
-    sheet.cell(row=i + 2, column=8).value = Price_campaignId[i]
-print('后端信息导入完毕')
-wb.save(file_name)
-
-# =========读取数据=========
-print('开始对比前后端数据...')
-
-
-def read_excel(file_path, sheet_name):
-    # 读取Excel表格表面数据，不读取公式，如需获取表格内公式，将data_only改为false(本代码不推荐，因为改了之后不会显示Excel数据)
-    file_sheet = load_workbook(file_path, data_only=True,)[sheet_name]
-
-    # 获取头部
-    sheet_header = []
-    for Header_data in range(file_sheet.max_column):
-        sheet_header.append(file_sheet.cell(row=1, column=Header_data+1).value)
-
-    # 获取数据
-    data_list = []
-    for data_data1 in range(file_sheet.max_row-1):
-        data_dict = {}
-        for data_data2 in range(len(sheet_header)):
-            data_dict[sheet_header[data_data2]] = file_sheet.cell(row=data_data1+2, column=data_data2+1).value
-        data_list.append(data_dict)
-    return data_list  # 返回数据
-
 
 # =======读取数据并且在指定列追加数据=======
 file_Data = read_excel(file_name, sheet.title)
