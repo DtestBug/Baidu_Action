@@ -1,0 +1,110 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options  # 无界面浏览器操作
+import requests
+import time
+Page_path = 'https://cloud.baidu.com/campaign/autumn-promotion/index.html?unifrom=homepage'
+Product_Ver = '20200805_discount_'  # 一期活动id前缀
+
+# 无界面操作
+# options = Options()
+# options.add_argument('--headless')
+
+driver = webdriver.Chrome()  # 谷歌驱动options=options
+driver.maximize_window()  # 全屏显示
+driver.get(url=Page_path)  # 打开网站
+
+
+'''
+# 新基建爆款·限时秒杀
+datas = driver.find_elements_by_css_selector('.kill-content')
+New_count = 0
+for data in datas:
+    Newji_data1 = datas[New_count].find_elements_by_css_selector(".config-lasting span")  # 识别前五个加GPU云服务器 Nvidia Tesla P4
+    Newji_data2 = datas[New_count].find_elements_by_css_selector(".series span")  # 百度智能门户 AIpage
+    Newji_data3 = datas[New_count].find_elements_by_css_selector(".select div")  # 人脸离线识别SDK,通用文字识别
+    Newji_data4 = datas[New_count].find_elements_by_css_selector(".time-limit-btn")
+    Product_id_Z = Newji_data4[0].get_attribute('data-type')  # 产品id中段 # 标签
+    Product_id_E = Newji_data4[0].get_attribute('data-conf')  # 产品id末段 # 标签
+
+    for btn in Newji_data1:
+        btn.click()  # 时长按钮切换
+        New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+        Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
+        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+        print(New_price, Old_price, Product_id)
+
+    if New_count == 5:
+        x = 0
+        for btn in Newji_data2:  # 下标作为第6个产品，百度智能门户 AIpage
+
+            btn.click()  # 时长按钮切换
+            New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+            Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
+            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+            print(New_price, Old_price, Product_id)
+            x += 1
+            if x == 2:
+                break
+
+    if New_count == 7:
+        for btn in Newji_data3:
+            time.sleep(0.5)
+            datas[New_count].find_element_by_css_selector(".model-type").click()  # 时长按钮切换
+            time.sleep(1)
+            btn.click()  # 时长按钮切换
+            New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+            Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
+            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+            print(New_price, Old_price, Product_id)
+
+    if New_count == 8:
+        x = 0
+        for btn in Newji_data3:
+            time.sleep(0.5)
+            datas[New_count].find_element_by_css_selector(".model-type").click()  # 时长按钮切换
+            time.sleep(1)
+            btn.click()
+            New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+            Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
+            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+            print(New_price, Old_price, Product_id)
+            x += 1
+            if x == 8:
+                break
+    New_count += 1
+'''
+# 高配云服务器·限时4折起
+datas1 = driver.find_elements_by_css_selector('.bcc-related-box')
+New_count = 0
+for data in datas1:
+    Newji_data1 = datas1[New_count].find_elements_by_css_selector(".buybcc-items div")
+    Newji_data4 = datas1[New_count].find_elements_by_css_selector(".common-btns")
+    Product_id_Z = Newji_data4[0].get_attribute('data-type')  # 产品id中段 # 标签
+    Product_id_E = Newji_data4[0].get_attribute('data-conf')  # 产品id末段 # 标签
+
+    for btn in Newji_data1:
+        time.sleep(1)
+        datas1[New_count].find_element_by_css_selector(".config-show").get_attribute('durationNow')  # 时长按钮切换
+        time.sleep(1)
+        btn.click()
+        New_price = (datas1[New_count].find_element_by_css_selector('.common-price').text)
+        Old_price = float(datas1[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
+        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+        print(New_price, Old_price, Product_id)
+
+    New_count += 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
