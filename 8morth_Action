@@ -1,9 +1,76 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options  # 无界面浏览器操作
 import requests
+from openpyxl import load_workbook
+from openpyxl.styles import PatternFill  # 导入填充模块
+from openpyxl import Workbook
+import datetime
 import time
-Page_path = 'https://cloud.baidu.com/campaign/autumn-promotion/index.html?unifrom=homepage'
+import json
+import time
+
+
+Page_path = 'https://cloudtest.baidu.com/campaign/2020augActivityTwo/index.html'
 Product_Ver = '20200805_discount_'  # 一期活动id前缀
+# 域名与建站所有产品campaignId
+campaignId_lists = []  # id总表
+price_lists = []  # 价格总表
+old_lists = []  # 原价总表
+
+# 后端价格汇总
+Price_new = []
+Price_old = []
+Price_campaignId = []
+
+Project_name = '8月普惠上云'
+Time1 = datetime.datetime.now().strftime('%Y-%m-%d %H-%M-%S')
+
+Ym_api = 'https://cloudtest.baidu.com/api/yunying/discount/login/info/order'  # 接口地址
+
+page_headers = {
+    'Cookie': 'AGL_USER_ID=5ed63b12-4440-4d47-b881-0f098f90410e; BIDUPSID=A9069B1FBC1A91044A9BEFCC8CFF8FE1; PSTM=1595216240; BAIDUID=965EAC8334F751D924041185AA64323A:FG=1; MCITY=-%3A; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; yjs_js_security_passport=e700866e4721bb2b3ec1695c399adf5930be8bcd_1597302603_js; BIDUPSID_BFESS=A9069B1FBC1A91044A9BEFCC8CFF8FE1; _ga=GA1.2.1775422955.1597372647; _gid=GA1.2.842133575.1597372647; BDUSS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; BDUSS_BFESS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; Hm_lvt_28a17f66627d87f1d046eae152a1c93d=1597198709,1597283859,1597372642,1597372691; UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; SECURE_UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; jsdk-user=v_dingguoqiang; BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; SECURE_BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; RT="z=1&dm=baidu.com&si=hkiudauq1p&ss=kdtnx7sd&sl=9&tt=axb&bcn=https%3A%2F%2Ffclog.baidu.com%2Flog%2Fweirwood%3Ftype%3Dperf&ld=do9a&cl=2ru5"; bce-userbind-source=PASSPORT%3BUUAP; bce-ctl-client-cookies="__cas__st__285,__cas__id__285,__cas__rn__,SIGNIN_UC,bce-device-cuid,bce-device-token,BAIDUID,ucbearer-clientid,ucbearer-devicecode,ucbearer-token,ucbearer-ucid"; bce-auth-type=UC; __cas__id__285=30736364; __cas__rn__=0; bce-sessionid=0028e62007484fe43f5a6b447d1c4ef7703; bce-user-info=2020-08-14T11:33:31Z|16f0e314d576f2a8e4bf4291adda89a4; bce-ctl-sessionmfa-cookie=bce-session; bce-session=db5adbbd3653492689b2bad486e13550743e6344eb9f40998fd9e19e26d35b04|0495112c3c478c5f86c9da6d4dd3c130; bce-login-type=UC; __cas__st__285=c838a4d3c17e3d4bc1025c773fb8cdf4485009ba450fe14bfc611a24070ee7a9750ead6fcc2ecfdb9a07dd65; bce-login-display-name=15011112222; _gat_gtag_UA_138572523_1=1; Hm_lpvt_28a17f66627d87f1d046eae152a1c93d=1597376027; BAIDU_CLOUD_TRACK_PATH=https%3A%2F%2Fcloudtest.baidu.com%2Fcampaign%2Forder.html%3F_%3D1597376011466%26unifrom%3Deventpage%23%2FaiDay%2FactivityPromotion~product%3Dnlp20200715%26config%3Dkill_nlp_540_10w_12%26qps%3D1'    # 'csrftoken': '2020-08-13T18:37:18Z|4ed1e831797bd2b9df7e60135c888f5e',
+    # 'Content-Type': 'application/json'
+}
+api_headers = {
+    'Cookie': 'AGL_USER_ID=5ed63b12-4440-4d47-b881-0f098f90410e; BIDUPSID=A9069B1FBC1A91044A9BEFCC8CFF8FE1; PSTM=1595216240; BAIDUID=965EAC8334F751D924041185AA64323A:FG=1; MCITY=-%3A; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; yjs_js_security_passport=e700866e4721bb2b3ec1695c399adf5930be8bcd_1597302603_js; BIDUPSID_BFESS=A9069B1FBC1A91044A9BEFCC8CFF8FE1; _ga=GA1.2.1775422955.1597372647; _gid=GA1.2.842133575.1597372647; BDUSS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; BDUSS_BFESS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; Hm_lvt_28a17f66627d87f1d046eae152a1c93d=1597198709,1597283859,1597372642,1597372691; UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; SECURE_UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; jsdk-user=v_dingguoqiang; BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; SECURE_BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; RT="z=1&dm=baidu.com&si=hkiudauq1p&ss=kdtnx7sd&sl=9&tt=axb&bcn=https%3A%2F%2Ffclog.baidu.com%2Flog%2Fweirwood%3Ftype%3Dperf&ld=do9a&cl=2ru5"; bce-userbind-source=PASSPORT%3BUUAP; bce-ctl-client-cookies="__cas__st__285,__cas__id__285,__cas__rn__,SIGNIN_UC,bce-device-cuid,bce-device-token,BAIDUID,ucbearer-clientid,ucbearer-devicecode,ucbearer-token,ucbearer-ucid"; bce-auth-type=UC; __cas__id__285=30736364; __cas__rn__=0; bce-sessionid=0028e62007484fe43f5a6b447d1c4ef7703; bce-user-info=2020-08-14T11:33:31Z|16f0e314d576f2a8e4bf4291adda89a4; bce-ctl-sessionmfa-cookie=bce-session; bce-session=db5adbbd3653492689b2bad486e13550743e6344eb9f40998fd9e19e26d35b04|0495112c3c478c5f86c9da6d4dd3c130; bce-login-type=UC; __cas__st__285=c838a4d3c17e3d4bc1025c773fb8cdf4485009ba450fe14bfc611a24070ee7a9750ead6fcc2ecfdb9a07dd65; bce-login-display-name=15011112222; _gat_gtag_UA_138572523_1=1; Hm_lpvt_28a17f66627d87f1d046eae152a1c93d=1597376027; BAIDU_CLOUD_TRACK_PATH=https%3A%2F%2Fcloudtest.baidu.com%2Fcampaign%2Forder.html%3F_%3D1597376011466%26unifrom%3Deventpage%23%2FaiDay%2FactivityPromotion~product%3Dnlp20200715%26config%3Dkill_nlp_540_10w_12%26qps%3D1',
+    # 'csrftoken': '2020-08-13T18:37:18Z|4ed1e831797bd2b9df7e60135c888f5e',
+    'Content-Type': 'application/json'
+}
+# file_name = r'E:\BD_A\8月普惠上云价格核对2020-09-04 17-38-29.xlsx'
+
+file_name = r'E:\BD_A\%s价格核对%s.xlsx' % (Project_name, Time1)
+wb = Workbook()  # 实例对象需要wb.save(r'E:\BD_A\域名价格核对%s.xlsx'% Time1)来创建文件保存数据
+
+# sheet重命名
+sheet = wb['Sheet']
+sheet.title = f'{Project_name}前后端价格对比'
+Fille = PatternFill('solid', fgColor='FFBB02')  # solid 是填充实色的意思？
+error_Fille = PatternFill('solid', fgColor='FF0000')  # darkVertical 是填充竖线  FF0000是红色
+header_Fille = PatternFill('solid', fgColor='99FF00')  # darkVertical 是填充竖线  99FF00是黄色
+
+
+# 先写头部
+excel_header = ['id', '前端campaignId', '折后价对比结果', '前端价格', '后端价格', '原价对比结果', '前端原价', '后端原价', '后端campaignId', '类型错误', '值错误']  # 首行头部信息作为变量可更改
+for i in range(len(excel_header)):
+    sheet.cell(row=1, column=i+1).value = excel_header[i]
+    sheet.cell(row=1, column=i+1).fill = header_Fille  # 首行颜色
+    sheet.freeze_panes = wb.active.cell(row=2, column=1)  # 首行冻结
+
+    # 单元格宽度设置
+    sheet.column_dimensions['A'].width = 5
+    sheet.column_dimensions['B'].width = 45
+    sheet.column_dimensions['C'].width = 20  # 折后价对比结果
+    sheet.column_dimensions['D'].width = 10
+    sheet.column_dimensions['E'].width = 10
+    sheet.column_dimensions['F'].width = 20  # 原价对比结果
+    sheet.column_dimensions['G'].width = 10
+    sheet.column_dimensions['H'].width = 10
+    sheet.column_dimensions['I'].width = 45
+
+
+
+
+
 
 # 无界面操作
 # options = Options()
@@ -11,100 +78,364 @@ Product_Ver = '20200805_discount_'  # 一期活动id前缀
 
 driver = webdriver.Chrome()  # 谷歌驱动options=options
 driver.maximize_window()  # 全屏显示
+data = {}
 driver.get(url=Page_path)  # 打开网站
+driver.find_element_by_css_selector('#username').send_keys('v_dingguoqiang')
+driver.find_element_by_css_selector('#password-email').send_keys('dgq2+19960623')
+driver.find_element_by_css_selector('#emailLogin').click()
 
 
-'''
+
 # 新基建爆款·限时秒杀
-datas = driver.find_elements_by_css_selector('.kill-content')
-New_count = 0
-for data in datas:
-    Newji_data1 = datas[New_count].find_elements_by_css_selector(".config-lasting span")  # 识别前五个加GPU云服务器 Nvidia Tesla P4
-    Newji_data2 = datas[New_count].find_elements_by_css_selector(".series span")  # 百度智能门户 AIpage
-    Newji_data3 = datas[New_count].find_elements_by_css_selector(".select div")  # 人脸离线识别SDK,通用文字识别
-    Newji_data4 = datas[New_count].find_elements_by_css_selector(".time-limit-btn")
-    Product_id_Z = Newji_data4[0].get_attribute('data-type')  # 产品id中段 # 标签
-    Product_id_E = Newji_data4[0].get_attribute('data-conf')  # 产品id末段 # 标签
+# datas = driver.find_elements_by_css_selector('.kill-content')
+# New_count = 0
+# for data in datas:
+#     Newji_data1 = datas[New_count].find_elements_by_css_selector(".config-lasting span")  # 识别前五个加GPU云服务器 Nvidia Tesla P4
+#     Newji_data2 = datas[New_count].find_elements_by_css_selector(".series span")  # 百度智能门户 AIpage
+#     Newji_data3 = datas[New_count].find_elements_by_css_selector(".select div")  # 人脸离线识别SDK,通用文字识别
+#     Newji_data4 = datas[New_count].find_elements_by_css_selector(".time-limit-btn")
+#     Product_id_Z = Newji_data4[0].get_attribute('data-type')  # 产品id中段 # 标签
+#     Product_id_E = Newji_data4[0].get_attribute('data-conf')  # 产品id末段 # 标签
+#
+#     for btn in Newji_data1:
+#         btn.click()  # 时长按钮切换
+#         New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+#         Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
+#         Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+#         print(New_price, Old_price, Product_id)
+#
+#     if New_count == 5:
+#         x = 0
+#         for btn in Newji_data2:  # 下标作为第6个产品，百度智能门户 AIpage
+#
+#             btn.click()  # 时长按钮切换
+#             New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+#             Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
+#             Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+#             print(New_price, Old_price, Product_id)
+#             x += 1
+#             if x == 2:
+#                 break
+#
+#     if New_count == 7:
+#         for btn in Newji_data3:
+#             time.sleep(0.5)
+#             datas[New_count].find_element_by_css_selector(".model-type").click()  # 时长按钮切换
+#             time.sleep(1)
+#             btn.click()  # 时长按钮切换
+#             New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+#             Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
+#             Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+#             print(New_price, Old_price, Product_id)
+#
+#     if New_count == 8:
+#         x = 0
+#         for btn in Newji_data3:
+#             time.sleep(0.5)
+#             datas[New_count].find_element_by_css_selector(".model-type").click()  # 时长按钮切换
+#             time.sleep(1)
+#             btn.click()
+#             New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
+#             Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
+#             Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+#             print(New_price, Old_price, Product_id)
+#             x += 1
+#             if x == 8:
+#                 break
+#     New_count += 1
 
-    for btn in Newji_data1:
-        btn.click()  # 时长按钮切换
-        New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
-        Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
-        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
-        print(New_price, Old_price, Product_id)
 
-    if New_count == 5:
-        x = 0
-        for btn in Newji_data2:  # 下标作为第6个产品，百度智能门户 AIpage
 
-            btn.click()  # 时长按钮切换
-            New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
-            Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
-            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
-            print(New_price, Old_price, Product_id)
-            x += 1
-            if x == 2:
-                break
-
-    if New_count == 7:
-        for btn in Newji_data3:
-            time.sleep(0.5)
-            datas[New_count].find_element_by_css_selector(".model-type").click()  # 时长按钮切换
-            time.sleep(1)
-            btn.click()  # 时长按钮切换
-            New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
-            Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
-            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
-            print(New_price, Old_price, Product_id)
-
-    if New_count == 8:
-        x = 0
-        for btn in Newji_data3:
-            time.sleep(0.5)
-            datas[New_count].find_element_by_css_selector(".model-type").click()  # 时长按钮切换
-            time.sleep(1)
-            btn.click()
-            New_price = (datas[New_count].find_element_by_css_selector('.common-price').text)
-            Old_price = float(datas[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
-            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
-            print(New_price, Old_price, Product_id)
-            x += 1
-            if x == 8:
-                break
-    New_count += 1
-'''
 # 高配云服务器·限时4折起
-datas1 = driver.find_elements_by_css_selector('.bcc-related-box')
-New_count = 0
-for data in datas1:
-    Newji_data1 = datas1[New_count].find_elements_by_css_selector(".buybcc-items div")
-    Newji_data4 = datas1[New_count].find_elements_by_css_selector(".common-btns")
-    Product_id_Z = Newji_data4[0].get_attribute('data-type')  # 产品id中段 # 标签
-    Product_id_E = Newji_data4[0].get_attribute('data-conf')  # 产品id末段 # 标签
+User_Types = driver.find_elements_by_css_selector('.cut-nav span')  # 选择企业用户专区或者个人用户专区
+for user_type in User_Types:
+    time.sleep(0.5)
+    user_type.click()
 
-    for btn in Newji_data1:
-        time.sleep(1)
-        datas1[New_count].find_element_by_css_selector(".config-show").get_attribute('durationNow')  # 时长按钮切换
-        time.sleep(1)
-        btn.click()
-        New_price = (datas1[New_count].find_element_by_css_selector('.common-price').text)
-        Old_price = float(datas1[New_count].find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
-        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
-        print(New_price, Old_price, Product_id)
+    if user_type.text == '企业用户专区':
+        print(user_type.text)
+        time.sleep(0.5)
+        driver.find_element_by_css_selector('.bcc-extend div').click()  # 展开更多企业产品
+        time.sleep(0.5)
+        datas1 = driver.find_elements_by_css_selector('.buybcc-items.company')  # 产品
+        count2 = 0
+        for data in datas1:
+            Newji_data1 = datas1[count2].find_element_by_css_selector(".config-show li:nth-child(4)")  # 带宽
+            Newji_data2 = datas1[count2].find_element_by_css_selector(".config-show li:nth-child(5)")  # 时长
 
-    New_count += 1
+            Newji_data1_1 = Newji_data1.find_elements_by_css_selector('.select div')  # 带宽 下拉框选项
+            Newji_data2_1 = Newji_data2.find_elements_by_css_selector('.select div')  # 时长 下拉框选项
+
+            if Newji_data1_1:  # 判断带宽下拉框是否存在
+                for i in Newji_data1_1:  # 循环带宽下拉框
+                    time.sleep(0.5)
+                    Newji_data1.click()  # 点击带宽下拉框让其展开
+                    time.sleep(1)
+                    i.click()
+                    for j in Newji_data2_1:  # 循环时长下拉框
+                        time.sleep(0.5)
+                        Newji_data2.click()  # 点击时长下拉框让其展开
+                        time.sleep(1)
+                        j.click()
+
+                        Newji_Btn = datas1[count2].find_elements_by_css_selector(".common-btns")  # 按钮中的内容
+                        Product_id_Z = Newji_Btn[0].get_attribute('data-type')  # 产品id中段 # 标签
+                        Product_id_E = Newji_Btn[0].get_attribute('data-conf')  # 产品id末段 # 标签
+                        New_price = (datas1[count2].find_element_by_css_selector('.heads strong').text)  # 现价
+                        Old_price = int(datas1[count2].find_element_by_css_selector('.del').text) + int(New_price)
+                        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+                        campaignId_lists.append(Product_id)
+                        old_lists.append(Old_price)
+                        price_lists.append(New_price)
+                        print(New_price, Old_price, Product_id)
+
+            if bool(Newji_data1_1) is False:
+                for j in Newji_data2_1:  # 循环时长下拉框
+                    time.sleep(0.5)
+                    Newji_data2.click()  # 点击时长下拉框让其展开
+                    time.sleep(1)
+                    j.click()
+
+                    Newji_Btn = datas1[count2].find_elements_by_css_selector(".common-btns")  # 按钮中的内容
+                    Product_id_Z = Newji_Btn[0].get_attribute('data-type')  # 产品id中段 # 标签
+                    Product_id_E = Newji_Btn[0].get_attribute('data-conf')  # 产品id末段 # 标签
+                    New_price = (datas1[count2].find_element_by_css_selector('.heads strong').text)  # 现价
+                    Old_price = int(datas1[count2].find_element_by_css_selector('.del').text) + int(New_price)
+                    Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+                    campaignId_lists.append(Product_id)
+                    old_lists.append(Old_price)
+                    price_lists.append(New_price)
+                    print(New_price, Old_price, Product_id)
+            count2 += 1  # 循环一次结束后count2加1
+
+    if user_type.text == '个人用户专区':
+        print(user_type.text)
+        time.sleep(0.5)
+        driver.find_element_by_css_selector('.bcc-extend div').click()  # 展开更多企业产品
+        time.sleep(0.5)
+        datas1 = driver.find_elements_by_css_selector('.buybcc-items.everyone')  # 产品
+
+        count2 = 0
+        for data in datas1:
+            Newji_data1 = datas1[count2].find_element_by_css_selector(".config-show li:nth-child(4)")  # 带宽
+            Newji_data2 = datas1[count2].find_element_by_css_selector(".config-show li:nth-child(5)")  # 时长
+
+            Newji_data1_1 = Newji_data1.find_elements_by_css_selector('.select div')  # 带宽 下拉框选项
+            Newji_data2_1 = Newji_data2.find_elements_by_css_selector('.select div')  # 时长 下拉框选项
+
+            if Newji_data1_1:  # 判断带宽下拉框是否存在
+                for i in Newji_data1_1:  # 循环带宽下拉框
+                    time.sleep(0.5)
+                    Newji_data1.click()  # 点击带宽下拉框让其展开
+                    time.sleep(1)
+                    i.click()
+                    for j in Newji_data2_1:  # 循环时长下拉框
+                        time.sleep(0.5)
+                        Newji_data2.click()  # 点击时长下拉框让其展开
+                        time.sleep(1)
+                        j.click()
+
+                        Newji_Btn = datas1[count2].find_elements_by_css_selector(".common-btns")  # 按钮中的内容
+                        Product_id_Z = Newji_Btn[0].get_attribute('data-type')  # 产品id中段 # 标签
+                        Product_id_E = Newji_Btn[0].get_attribute('data-conf')  # 产品id末段 # 标签
+                        New_price = (datas1[count2].find_element_by_css_selector('.heads strong').text)  # 现价
+                        Old_price = int(datas1[count2].find_element_by_css_selector('.del').text) + int(New_price)
+                        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
+                        campaignId_lists.append(Product_id)
+                        old_lists.append(Old_price)
+                        price_lists.append(New_price)
+                        print(New_price, Old_price, Product_id)
+
+            count2 += 1  # 循环一次结束后count2加1
+
+
+
+
+x = 0
+for i in range(len(campaignId_lists)):
+    x += 1
+    sheet.cell(row=i + 2, column=1).value = x
+    sheet.cell(row=i + 2, column=2).value = campaignId_lists[i]
+
+for i in range(len(price_lists)):
+    sheet.cell(row=i + 2, column=4).value = str(price_lists[i])
+    sheet.cell(row=i + 2, column=4).fill = Fille  # 将当前行的每一个表格填充颜色
+
+for i in range(len(old_lists)):
+    sheet.cell(row=i + 2, column=7).value = str(old_lists[i])
+    sheet.cell(row=i + 2, column=7).fill = Fille  # 将当前行的每一个表格填充颜色
+
+print('前端信息导入完毕！')
+print('=' * 100)
+
+
+data_count = 0
+for i in campaignId_lists:
+    data_count += 1
+    data = "{\"campaignId\":\"%s\"}" % i  # 阔以请求到数据
+    print(data_count,data)
+
+    # data = {"campaignId":"20200607_discount_kill_aipage_site_miniprogram_1_12m"}  # 报500错误
+    count = 0
+
+    while True:
+        try:
+            # 请求的时候参数必须为url,data,headers。如果headers内需要其他参数的话，必须要用headers=headers，直接写cookies=XX会报错
+            time.sleep(5)  # 请求接口等待5秒钟
+            result = requests.post(url=Ym_api, data=data, headers=api_headers).json()  # verify=False
+
+        except requests.exceptions.ProxyError as e:
+            print(e)
+            print('远程访问被拒绝，正在重连...')
+        except requests.exceptions.ConnectionError as r:
+            print(r, f'\n已经{count}分钟')
+            time.sleep(60)
+            count += 1
+        else:
+            count += 1
+            try :
+                if result['result']['price']:
+                    Price_new.append(str(result['result']['price']['campaignPrice']))  # .split('.')[0])
+                    Price_old.append(str(result['result']['price']['originalPrice']))  # .split('.')[0])
+                    Price_campaignId.append(result['result']['privilegeId'])
+            except KeyError as e:
+                Price_new.append('本产品查询报500')
+                if result['error']:
+                    Price_old.append(result['error'])
+                else:
+                    Price_old.append('缺少报错信息')
+                Price_campaignId.append(data)
+                print(result,'价格没有查出来！', data)
+                pass
+            break
+
+    # 调试第二条数据跳出
+    if data_count == 2:
+        break
+for i in range(len(Price_new)):
+    sheet.cell(row=i + 2, column=5).value = str(Price_new[i])
+    sheet.cell(row=i + 2, column=5).fill = Fille  # 将当前行的每一个表格填充颜色
+
+for i in range(len(Price_old)):
+    sheet.cell(row=i + 2, column=8).value = str(Price_old[i])
+    sheet.cell(row=i + 2, column=8).fill = Fille  # 将当前行的每一个表格填充颜色
+
+for i in range(len(Price_campaignId)):
+    sheet.cell(row=i + 2, column=9).value = Price_campaignId[i]
+print('后端信息导入完毕')
+wb.save(file_name)
 
 
 
 
 
+# =========读取数据=========
+print('开始对比前后端数据...')
 
 
+def read_excel(file_path, sheet_name):
+    # 读取Excel表格表面数据，不读取公式，如需获取表格内公式，将data_only改为false(本代码不推荐，因为改了之后不会显示Excel数据)
+    file_sheet = load_workbook(file_path, data_only=True,)[sheet_name]
+
+    # 获取头部
+    sheet_header = []
+    for Header_data in range(file_sheet.max_column):
+        sheet_header.append(file_sheet.cell(row=1, column=Header_data+1).value)
+
+    # 获取数据
+    data_list = []
+    for data_data1 in range(file_sheet.max_row-1):
+        data_dict = {}
+        for data_data2 in range(len(sheet_header)):
+            data_dict[sheet_header[data_data2]] = file_sheet.cell(row=data_data1+2, column=data_data2+1).value
+        data_list.append(data_dict)
+    return data_list  # 返回数据
+
+# =======读取数据并且在指定列追加数据=======
+file_Data = read_excel(file_name, sheet.title)
+wb1 = load_workbook(file_name)
+ws1 = wb1[sheet.title]
+
+# =========数据对比=========
+m = 0  # 折后价对比结果
+n = 0  # 原价对比结果
+for i in file_Data:
+    # print(i)
+    try:
+    # ============ 折后价 =============
+        if i['前端价格'] is None:
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "没有查询到前端价格"  # excel追加数据
+            ws1.cell(row=m + 1, column=3).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+        if i['后端价格'] is None:
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "没有查询到后端价格"  # excel追加数据
+            ws1.cell(row=m + 1, column=3).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+        if i['前端原价'] is None:
+            n += 1
+            ws1.cell(row=m + 1, column=3).value = "没有查询到前端价格"  # excel追加数据
+            ws1.cell(row=m + 1, column=3).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+        if i['后端原价'] is None:
+            n += 1
+            ws1.cell(row=n + 1, column=6).value = "没有查询到后端原价"  # excel追加数据
+            ws1.cell(row=n + 1, column=6).fill = error_Fille  # 将当前行的每一个表格填充颜色
 
 
+        if float(i['前端价格']) - float(i['后端价格']) == 0.0:
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "折后价一致"  # excel追加数据
 
+        elif 0.0 < (float(i['前端价格']) - float(i['后端价格'])) < 0.5:
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "前端价格大于后端价格，相差不超出5毛钱"  # excel追加数据
 
+        elif 0.0 > (float(i['前端价格']) - float(i['后端价格'])) > -0.5:
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "前端价格小于后端价格，相差不超出5毛钱"  # excel追加数据
 
+        elif float(i['前端价格']) - float(i['后端价格']) >= 1:
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "折后价不一致"  # excel追加数据
+            ws1.cell(row=m + 1, column=3).fill = error_Fille  # 将当前行的每一个表格填充颜色
 
+        elif float(i['前端价格']) - float(i['后端价格']) < -0.5:
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "折后价不一致"  # excel追加数据
+            ws1.cell(row=m + 1, column=3).fill = error_Fille  # 将当前行的每一个表格填充颜色
 
+        # ============ 原价 =============
+        if float(i['前端原价']) - float(i['后端原价']) == 0.0:
+            n += 1
+            ws1.cell(row=n + 1, column=6).value = "原价一致"  # excel追加数据
 
+        elif 0.0 < (float(i['前端原价']) - float(i['后端原价'])) < 0.5:
+            n += 1
+            ws1.cell(row=n + 1, column=6).value = "前端原价大于后端原价，相差不超出5毛钱"  # excel追加数据
+
+        elif 0.0 > (float(i['前端原价']) - float(i['后端原价'])) > -0.5:
+            n += 1
+            ws1.cell(row=n + 1, column=6).value = "前端原价小于后端原价，相差不超出5毛钱"  # excel追加数据
+
+        elif float(i['前端原价']) - float(i['后端原价']) >= 1:
+            n += 1
+            ws1.cell(row=n + 1, column=6).value = "原价不一致"  # excel追加数据
+            ws1.cell(row=n + 1, column=6).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+        elif float(i['前端原价']) - float(i['后端原价']) < -0.5:
+            n += 1
+            ws1.cell(row=n + 1, column=6).value = "原价不一致"  # excel追加数据
+            ws1.cell(row=n + 1, column=6).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+    except TypeError as e1:
+        ws1.cell(row=m + 1, column=10).value = f'参数必须是字符串或数字'  # excel追加数据
+        ws1.cell(row=n + 1, column=10).fill = error_Fille  # 将当前行的每一个表格填充颜色
+        pass
+
+    except ValueError as e2:
+        ws1.cell(row=m + 1, column=11).value = f'无法将字符串转换为浮点'  # excel追加数据
+        ws1.cell(row=n + 1, column=11).fill = error_Fille  # 将当前行的每一个表格填充颜色
+        pass
+wb1.save(file_name)
