@@ -35,9 +35,9 @@ api_headers = {
     # 'Cookie': 'AGL_USER_ID=5ed63b12-4440-4d47-b881-0f098f90410e; BIDUPSID=A9069B1FBC1A91044A9BEFCC8CFF8FE1; PSTM=1595216240; BAIDUID=965EAC8334F751D924041185AA64323A:FG=1; MCITY=-%3A; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; yjs_js_security_passport=e700866e4721bb2b3ec1695c399adf5930be8bcd_1597302603_js; BIDUPSID_BFESS=A9069B1FBC1A91044A9BEFCC8CFF8FE1; _ga=GA1.2.1775422955.1597372647; _gid=GA1.2.842133575.1597372647; BDUSS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; BDUSS_BFESS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; Hm_lvt_28a17f66627d87f1d046eae152a1c93d=1597198709,1597283859,1597372642,1597372691; UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; SECURE_UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; jsdk-user=v_dingguoqiang; BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; SECURE_BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; RT="z=1&dm=baidu.com&si=hkiudauq1p&ss=kdtnx7sd&sl=9&tt=axb&bcn=https%3A%2F%2Ffclog.baidu.com%2Flog%2Fweirwood%3Ftype%3Dperf&ld=do9a&cl=2ru5"; bce-userbind-source=PASSPORT%3BUUAP; bce-ctl-client-cookies="__cas__st__285,__cas__id__285,__cas__rn__,SIGNIN_UC,bce-device-cuid,bce-device-token,BAIDUID,ucbearer-clientid,ucbearer-devicecode,ucbearer-token,ucbearer-ucid"; bce-auth-type=UC; __cas__id__285=30736364; __cas__rn__=0; bce-sessionid=0028e62007484fe43f5a6b447d1c4ef7703; bce-user-info=2020-08-14T11:33:31Z|16f0e314d576f2a8e4bf4291adda89a4; bce-ctl-sessionmfa-cookie=bce-session; bce-session=db5adbbd3653492689b2bad486e13550743e6344eb9f40998fd9e19e26d35b04|0495112c3c478c5f86c9da6d4dd3c130; bce-login-type=UC; __cas__st__285=c838a4d3c17e3d4bc1025c773fb8cdf4485009ba450fe14bfc611a24070ee7a9750ead6fcc2ecfdb9a07dd65; bce-login-display-name=15011112222; _gat_gtag_UA_138572523_1=1; Hm_lpvt_28a17f66627d87f1d046eae152a1c93d=1597376027; BAIDU_CLOUD_TRACK_PATH=https%3A%2F%2Fcloudtest.baidu.com%2Fcampaign%2Forder.html%3F_%3D1597376011466%26unifrom%3Deventpage%23%2FaiDay%2FactivityPromotion~product%3Dnlp20200715%26config%3Dkill_nlp_540_10w_12%26qps%3D1',
     'Content-Type': 'application/json'
 }
-file_name = r'H:\4_A_test\8月普惠上云价格核对2020-09-09 22-23-20.xlsx'
+# file_name = r'H:\4_A_test\8月普惠上云价格核对2020-09-09 22-23-20.xlsx'
 
-# file_name = r'H:\4_A_test\%s价格核对%s.xlsx' % (Project_name, Time1)
+file_name = r'H:\4_A_test\%s价格核对%s.xlsx' % (Project_name, Time1)
 wb = Workbook()  # 实例对象需要wb.save(r'E:\BD_A\域名价格核对%s.xlsx'% Time1)来创建文件保存数据
 
 # sheet重命名
@@ -741,8 +741,8 @@ for i in campaignId_lists:
             break
 
     # 调试第二条数据跳出
-    if data_count == 1:
-        break
+    # if data_count == 1:
+    #     break
 
 # 后端折后价以及原价
 for i in range(len(Price_new)):
