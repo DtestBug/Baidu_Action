@@ -1,14 +1,13 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options  # 无界面浏览器操作
 import requests
-import configparser
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill  # 导入填充模块
 from openpyxl import Workbook
 import datetime
 import time
-web1 = configparser.ConfigParser()
-web1.read("settings.txt", encoding='UTF-8')
+import json
+
 
 Page_path = 'https://cloud.baidu.com/campaign/2020augActivityTwo/index.html'
 Product_Ver = '20200805_discount_'  # 一期活动id前缀
@@ -36,10 +35,9 @@ api_headers = {
     # 'Cookie': 'AGL_USER_ID=5ed63b12-4440-4d47-b881-0f098f90410e; BIDUPSID=A9069B1FBC1A91044A9BEFCC8CFF8FE1; PSTM=1595216240; BAIDUID=965EAC8334F751D924041185AA64323A:FG=1; MCITY=-%3A; BDORZ=B490B5EBF6F3CD402E515D22BCDA1598; yjs_js_security_passport=e700866e4721bb2b3ec1695c399adf5930be8bcd_1597302603_js; BIDUPSID_BFESS=A9069B1FBC1A91044A9BEFCC8CFF8FE1; _ga=GA1.2.1775422955.1597372647; _gid=GA1.2.842133575.1597372647; BDUSS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; BDUSS_BFESS=0VNZm1JanVZfjg1SDh0Nm5JaC1ZdzJIUnlHOVExalpEb3Z5bExYVVdqWVBobDFmRUFBQUFBJCQAAAAAAAAAAAEAAACFA67ysOvU2LzT0rsAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA~5NV8P-TVfZ; Hm_lvt_28a17f66627d87f1d046eae152a1c93d=1597198709,1597283859,1597372642,1597372691; UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; SECURE_UUAP_P_TOKEN=PT-500991099228983296-4YpivKwajF-uuap; jsdk-user=v_dingguoqiang; BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; SECURE_BSG_B_TOKEN=3UaasTcl7sy9jCzBPHgOzkX6UJE7iVP9XKeDG8n0YnFgx/lTags+43ZWLjbMRwQ6gS6Qvrhs1t+WPya4p9rqJF/TK8dPECuzr9W54ca6xbc=; RT="z=1&dm=baidu.com&si=hkiudauq1p&ss=kdtnx7sd&sl=9&tt=axb&bcn=https%3A%2F%2Ffclog.baidu.com%2Flog%2Fweirwood%3Ftype%3Dperf&ld=do9a&cl=2ru5"; bce-userbind-source=PASSPORT%3BUUAP; bce-ctl-client-cookies="__cas__st__285,__cas__id__285,__cas__rn__,SIGNIN_UC,bce-device-cuid,bce-device-token,BAIDUID,ucbearer-clientid,ucbearer-devicecode,ucbearer-token,ucbearer-ucid"; bce-auth-type=UC; __cas__id__285=30736364; __cas__rn__=0; bce-sessionid=0028e62007484fe43f5a6b447d1c4ef7703; bce-user-info=2020-08-14T11:33:31Z|16f0e314d576f2a8e4bf4291adda89a4; bce-ctl-sessionmfa-cookie=bce-session; bce-session=db5adbbd3653492689b2bad486e13550743e6344eb9f40998fd9e19e26d35b04|0495112c3c478c5f86c9da6d4dd3c130; bce-login-type=UC; __cas__st__285=c838a4d3c17e3d4bc1025c773fb8cdf4485009ba450fe14bfc611a24070ee7a9750ead6fcc2ecfdb9a07dd65; bce-login-display-name=15011112222; _gat_gtag_UA_138572523_1=1; Hm_lpvt_28a17f66627d87f1d046eae152a1c93d=1597376027; BAIDU_CLOUD_TRACK_PATH=https%3A%2F%2Fcloudtest.baidu.com%2Fcampaign%2Forder.html%3F_%3D1597376011466%26unifrom%3Deventpage%23%2FaiDay%2FactivityPromotion~product%3Dnlp20200715%26config%3Dkill_nlp_540_10w_12%26qps%3D1',
     'Content-Type': 'application/json'
 }
-# file_name = r'E:\BD_A\8月普惠上云价格核对2020-09-04 17-38-29.xlsx'
+file_name = r'H:\4_A_test\8月普惠上云价格核对2020-09-09 22-23-20.xlsx'
 
-
-file_name = r'E:\BD_A\%s价格核对%s.xlsx' % (Project_name, Time1)
+# file_name = r'H:\4_A_test\%s价格核对%s.xlsx' % (Project_name, Time1)
 wb = Workbook()  # 实例对象需要wb.save(r'E:\BD_A\域名价格核对%s.xlsx'% Time1)来创建文件保存数据
 
 # sheet重命名
@@ -94,7 +92,6 @@ for data in datas:
     Newji_data2 = data.find_elements_by_css_selector(".series span")  # 百度智能门户 AIpage
     Newji_data3 = data.find_elements_by_css_selector(".select div")  # 人脸离线识别SDK,通用文字识别
 
-
     if (New_count == 0) or (New_count == 1):
         Newji_data4 = data.find_element_by_css_selector(".kill-content .time-limit-btn")
         Product_id_Z = Newji_data4.get_attribute('data-type')  # 产品id中段 # 标签
@@ -102,11 +99,15 @@ for data in datas:
 
         New_price = (data.find_element_by_css_selector('.common-price').text)
         Old_price = float(data.find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
-        Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
         print(Product_id, New_price, Old_price)
         campaignId_lists.append(Product_id)
         price_lists.append(New_price)
         old_lists.append(Old_price)
+
+
+
+
 
 
     if (New_count == 2) or (New_count == 3) or (New_count == 7):
@@ -118,7 +119,7 @@ for data in datas:
             Product_id_E = Newji_data4.get_attribute('data-conf')  # 产品id末段 # 标签
             New_price = (data.find_element_by_css_selector('.common-price').text)
             Old_price = float(data.find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
-            Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
             print(Product_id, New_price, Old_price)
             campaignId_lists.append(Product_id)
             price_lists.append(New_price)
@@ -149,7 +150,7 @@ for data in datas:
 
             New_price = (data.find_element_by_css_selector('.common-price').text)
             Old_price = float(data.find_element_by_css_selector('.sheng-price').text[:-1])+float(New_price)
-            Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
             print(Product_id, New_price, Old_price)
             campaignId_lists.append(Product_id)
             price_lists.append(New_price)
@@ -168,7 +169,7 @@ for data in datas:
 
             New_price = (data.find_element_by_css_selector('.common-price').text)
             Old_price = float(data.find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
-            Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
             print(Product_id, New_price, Old_price)
             campaignId_lists.append(Product_id)
             price_lists.append(New_price)
@@ -186,7 +187,7 @@ for data in datas:
 
             New_price = (data.find_element_by_css_selector('.common-price').text)
             Old_price = float(data.find_element_by_css_selector('.sheng-price').text[:-1]) + float(New_price)
-            Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
             # print(Product_id, New_price, Old_price)
             print('20200805_two_discount_kill_face_sdk')
             campaignId_lists.append('20200805_two_discount_kill_face_sdk')
@@ -234,7 +235,7 @@ for user_type in User_Types:
                         Product_id_E = Newji_Btn[0].get_attribute('data-conf')  # 产品id末段 # 标签
                         New_price = (datas1[count2].find_element_by_css_selector('.heads strong').text)  # 现价
                         Old_price = float(datas1[count2].find_element_by_css_selector('.del').text) + float(New_price)
-                        Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                         print(Product_id, New_price, Old_price)
                         campaignId_lists.append(Product_id)
                         price_lists.append(New_price)
@@ -253,7 +254,7 @@ for user_type in User_Types:
                     Product_id_E = Newji_Btn[0].get_attribute('data-conf')  # 产品id末段 # 标签
                     New_price = (datas1[count2].find_element_by_css_selector('.heads strong').text)  # 现价
                     Old_price = int(datas1[count2].find_element_by_css_selector('.del').text) + int(New_price)
-                    Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                    Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                     print(Product_id, New_price, Old_price)
                     campaignId_lists.append(Product_id)
                     price_lists.append(New_price)
@@ -292,7 +293,7 @@ for user_type in User_Types:
                         Product_id_E = Newji_Btn[0].get_attribute('data-conf')  # 产品id末段 # 标签
                         New_price = (datas1[count2].find_element_by_css_selector('.heads strong').text)  # 现价
                         Old_price = float(datas1[count2].find_element_by_css_selector('.del').text) + float(New_price)
-                        Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                         print(Product_id, New_price, Old_price)
                         campaignId_lists.append(Product_id)
                         price_lists.append(New_price)
@@ -339,7 +340,7 @@ for i in AI_data:
                 :-1]) + float(New_price)  # 原价
             Product_id_Z = AI_Product_id.get_attribute('data-type')
             Product_id_E = AI_Product_id.get_attribute('data-conf')
-            Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+            Product_id = Product_Ver"+ Product_id_Z + '_' + Product_id_E
             print(Product_id, New_price, Old_price)
             campaignId_lists.append(Product_id)
             price_lists.append(New_price)
@@ -374,7 +375,7 @@ for i in AI_data:
                 :-1]) + float(New_price)  # 原价
             Product_id_Z = AI_Product_id.get_attribute('data-type')
             Product_id_E = AI_Product_id.get_attribute('data-conf')
-            Product_id = web1.get("set", "Product_Ver") + 'buy_' + Product_id_Z + '_' + Product_id_E
+            Product_id = Product_Ver+ 'buy_' + Product_id_Z + '_' + Product_id_E
             print(Product_id, New_price, Old_price)
             campaignId_lists.append(Product_id)
             price_lists.append(New_price)
@@ -405,7 +406,7 @@ for i in AI_data:
                     :-1]) + float(New_price)  # 原价
                 Product_id_Z = AI_Product_id.get_attribute('data-type')
                 Product_id_E = AI_Product_id.get_attribute('data-conf')
-                Product_id = web1.get("set", "Product_Ver") + 'buy_' + Product_id_Z + '_' + Product_id_E
+                Product_id = Product_Ver + 'buy_' + Product_id_Z + '_' + Product_id_E
                 print(Product_id, New_price, Old_price)
                 campaignId_lists.append(Product_id)
                 price_lists.append(New_price)
@@ -437,7 +438,7 @@ for i in AI_data:
                             pass
                     Product_id_Z = AI_Product_id.get_attribute('data-type')
                     Product_id_E = AI_Product_id.get_attribute('data-conf')
-                    Product_id = web1.get("set", "Product_Ver2") + 'buy_' +  Product_id_Z + '_' + Product_id_E +'_day'
+                    Product_id = Product_Ver2 + 'buy_' +  Product_id_Z + '_' + Product_id_E +'_day'
                     print(Product_id, New_price, Old_price)
                     campaignId_lists.append(Product_id)
                     price_lists.append(New_price)
@@ -457,7 +458,7 @@ for i in AI_data:
                             pass
                     Product_id_Z = AI_Product_id.get_attribute('data-type')
                     Product_id_E = AI_Product_id.get_attribute('data-conf')
-                    Product_id = web1.get("set", "Product_Ver2") + 'buy_' +  Product_id_Z + '_' + Product_id_E +'_month'
+                    Product_id = Product_Ver2 + 'buy_' +  Product_id_Z + '_' + Product_id_E +'_month'
                     print(Product_id, New_price, Old_price)
                     campaignId_lists.append(Product_id)
                     price_lists.append(New_price)
@@ -497,7 +498,7 @@ for Yun_type_btn in Yun_type_btns:
                     Old_price = float(Product_less_data.find_element_by_css_selector(".product-items-btn p .del").text[:-1]) + float(New_price)  # 原价
                     Product_id_Z = Product_less_data.find_element_by_css_selector('.common-btns').get_attribute('data-type')
                     Product_id_E = Product_less_data.find_element_by_css_selector('.common-btns').get_attribute('data-conf')
-                    Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                    Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                     print(Product_id, New_price, Old_price)
                     campaignId_lists.append(Product_id)
                     price_lists.append(New_price)
@@ -519,7 +520,7 @@ for Yun_type_btn in Yun_type_btns:
                                 'data-type')
                             Product_id_E = Product_less_data.find_element_by_css_selector('.common-btns').get_attribute(
                                 'data-conf')
-                            Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                            Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                             print(Product_id, New_price, Old_price)
                             campaignId_lists.append(Product_id)
                             price_lists.append(New_price)
@@ -533,7 +534,7 @@ for Yun_type_btn in Yun_type_btns:
                     Old_price = float(Product_less_data.find_element_by_css_selector(".product-items-btn p .del").text[:-1]) + float(New_price)  # 原价
                     Product_id_Z = Product_less_data.find_element_by_css_selector('.common-btns').get_attribute('data-type')
                     Product_id_E = Product_less_data.find_element_by_css_selector('.common-btns').get_attribute('data-conf')
-                    Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                    Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                     print(Product_id, New_price, Old_price)
                     campaignId_lists.append(Product_id)
                     price_lists.append(New_price)
@@ -565,7 +566,7 @@ for Yun_type_btn in Yun_type_btns:
                             'data-type')
                         Product_id_E = Product_ai_data.find_element_by_css_selector('.common-btns').get_attribute(
                             'data-conf')
-                        Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                        Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                         print(Product_id, New_price, Old_price)
                         campaignId_lists.append(Product_id)
                         price_lists.append(New_price)
@@ -587,7 +588,7 @@ for Yun_type_btn in Yun_type_btns:
                         'data-type')
                     Product_id_E = Product_ai_data.find_element_by_css_selector('.common-btns').get_attribute(
                         'data-conf')
-                    Product_id = web1.get("set", "Product_Ver2") + Product_id_Z + '_' + Product_id_E
+                    Product_id = Product_Ver2 + Product_id_Z + '_' + Product_id_E
                     print(Product_id, New_price, Old_price)
                     campaignId_lists.append(Product_id)
                     price_lists.append(New_price)
@@ -605,7 +606,7 @@ for Yun_type_btn in Yun_type_btns:
                 Product_id_Z = 'buy_rds'
                 Product_id_E = Product_sql_data.find_element_by_css_selector('.common-btns').get_attribute(
                     'data-conf')
-                Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                 print(Product_id, New_price, Old_price)
                 campaignId_lists.append(Product_id)
                 price_lists.append(New_price)
@@ -620,7 +621,7 @@ for Yun_type_btn in Yun_type_btns:
                     'data-type')
                 Product_id_E = Product_sql_data.find_element_by_css_selector('.common-btns').get_attribute(
                     'data-conf')
-                Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                 print(Product_id, New_price, Old_price)
                 campaignId_lists.append(Product_id)
                 price_lists.append(New_price)
@@ -648,7 +649,7 @@ for Yun_type_btn in Yun_type_btns:
                         'data-type')
                     Product_id_E = Product_bcd_data.find_element_by_css_selector('.common-btns').get_attribute(
                         'data-conf')
-                    Product_id = web1.get("set", "Product_Ver2") + Product_id_Z + '_' + Product_id_E
+                    Product_id = Product_Ver2 + Product_id_Z + '_' + Product_id_E
                     print(Product_id, New_price, Old_price)
                     campaignId_lists.append(Product_id)
                     price_lists.append(New_price)
@@ -661,7 +662,7 @@ for Yun_type_btn in Yun_type_btns:
                     'data-type')
                 Product_id_E = Product_bcd_data.find_element_by_css_selector('.common-btns').get_attribute(
                     'data-conf')
-                Product_id = web1.get("set", "Product_Ver2") + Product_id_Z + '_' + Product_id_E
+                Product_id = Product_Ver2 + Product_id_Z + '_' + Product_id_E
                 print(Product_id, New_price, Old_price)
                 campaignId_lists.append(Product_id)
                 price_lists.append(New_price)
@@ -675,7 +676,7 @@ for Yun_type_btn in Yun_type_btns:
                     'data-type')
                 Product_id_E = Product_bcd_data.find_element_by_css_selector('.common-btns').get_attribute(
                     'data-conf')
-                Product_id = web1.get("set", "Product_Ver") + Product_id_Z + '_' + Product_id_E
+                Product_id = Product_Ver + Product_id_Z + '_' + Product_id_E
                 print(Product_id, New_price, Old_price)
                 campaignId_lists.append(Product_id)
                 price_lists.append(New_price)
@@ -683,7 +684,6 @@ for Yun_type_btn in Yun_type_btns:
             Bcd_count += 1
 
     Yun_type_count += 1
-
 
 
 
@@ -720,7 +720,6 @@ for i in campaignId_lists:
             # 请求的时候参数必须为url,data,headers。如果headers内需要其他参数的话，必须要用headers=headers，直接写cookies=XX会报错
             time.sleep(5)  # 请求接口等待5秒钟
             result = requests.post(url=Ym_api, data=data, headers=api_headers).json()  # verify=False
-
         except requests.exceptions.ProxyError as e:
             print(e)
             print('远程访问被拒绝，正在重连...')
@@ -728,26 +727,21 @@ for i in campaignId_lists:
             print(r, f'\n已经{count}分钟')
             time.sleep(60)
             count += 1
+
+        if 'result' in result:
+            print(result, 111)
+            Price_new.append(str(result['result']['campaignPrice']))  # .split('.')[0])
+            Price_old.append(str(result['result']['originalPrice']))  # .split('.')[0])
         else:
+            print(222)
+            Price_new.append(str(result))  # .split('.')[0])
+            Price_old.append(str(result))  # .split('.')[0])
             count += 1
-            try :
-                if result['result']['campaignPrice']:
-                    Price_new.append(str(result['result']['campaignPrice']))  # .split('.')[0])
-                    Price_old.append(str(result['result']['originalPrice']))  # .split('.')[0])
 
-            except KeyError as e:
-                Price_new.append('本产品查询报500')
-                if result['error']:
-                    Price_old.append(result['error'])
-                else:
-                    Price_old.append('缺少报错信息')
-
-                print(result,'价格没有查出来！', data)
-                pass
             break
 
     # 调试第二条数据跳出
-    if data_count == 10:
+    if data_count == 1:
         break
 
 # 后端折后价以及原价
@@ -761,9 +755,6 @@ for i in range(len(Price_old)):
 
 print('后端信息导入完毕')
 wb.save(file_name)
-
-
-
 
 
 # =========读取数据=========
@@ -797,9 +788,18 @@ ws1 = wb1[sheet.title]
 m = 0  # 折后价对比结果
 n = 0  # 原价对比结果
 for i in file_Data:
-    # print(i)
     try:
     # ============ 折后价 =============
+        if "{'success': True, 'status': 200}" in str(i['后端价格']):  # 判断前端ID拼接是否可以请求到有效数据的
+            m += 1
+            ws1.cell(row=m + 1, column=3).value = "检查前端的campaignId"  # excel追加数据
+            ws1.cell(row=m + 1, column=3).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+        if "{'success': True, 'status': 200}" in str(i['后端原价']):  # 判断前端ID拼接是否可以请求到有效数据的
+            n += 1
+            ws1.cell(row=n + 1, column=6).value = "检查前端的campaignId"  # excel追加数据
+            ws1.cell(row=n + 1, column=6).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
         if i['前端价格'] is None:
             if (i['前端价格'] is None) and (i['后端价格'] is None):
                 m += 1
@@ -814,6 +814,8 @@ for i in file_Data:
             m += 1
             ws1.cell(row=m + 1, column=3).value = "没有查询到后端价格"  # excel追加数据
             ws1.cell(row=m + 1, column=3).fill = error_Fille  # 将当前行的每一个表格填充颜色
+
+
 
         if i['前端原价'] is None:
             if (i['前端原价'] is None) and (i['后端原价'] is None):
@@ -875,17 +877,12 @@ for i in file_Data:
             ws1.cell(row=n + 1, column=6).value = "原价不一致"  # excel追加数据
             ws1.cell(row=n + 1, column=6).fill = error_Fille  # 将当前行的每一个表格填充颜色
 
+        else:
+            print('excel录入错误数据')
+
     except TypeError as e1:
-        # n += 1
-        # m += 1
-        # ws1.cell(row=m + 1, column=10).value = f'参数必须是字符串或数字'  # excel追加数据
-        # ws1.cell(row=n + 1, column=10).fill = error_Fille  # 将当前行的每一个表格填充颜色
         pass
 
     except ValueError as e2:
-        # n += 1
-        # m += 1
-        # ws1.cell(row=m + 1, column=11).value = f'无法将字符串转换为浮点'  # excel追加数据
-        # ws1.cell(row=n + 1, column=11).fill = error_Fille  # 将当前行的每一个表格填充颜色
         pass
 wb1.save(file_name)
